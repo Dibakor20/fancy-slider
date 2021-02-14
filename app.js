@@ -21,6 +21,9 @@ const showImages = (images) => {
   // console.log(images)
   galleryHeader.style.display = 'flex';
   images.forEach(image => {
+    let count = images.length;
+    const countIssue = document.getElementById("total");
+    countIssue.innerHTML = `<h3>total image: ${count} </h3>`
     let div = document.createElement('div');
     div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
@@ -43,14 +46,16 @@ let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
   element.classList.add('added');
- 
+  
   let item = sliders.indexOf(img);
+  console.log(item)
+  console.log(sliders.length)
   if (item === -1) {
     sliders.push(img);
-  } else {
+  } else if(item !== -1) {
     // alert('Hey, Already added !')
     element.classList.remove('added');
-    
+    sliders.pop(img)
   }
 }
 var timer
@@ -73,11 +78,28 @@ const createSlider = () => {
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
-  const duration = document.getElementById('duration').value || 1000;
-  
+  let duration = document.getElementById('duration').value || 1000;
+  console.log(typeof(duration))
   if(duration < 0){
-    alert('time can not be negative')
-  } else{
+    alert("negative is not accepted.value is converted to positive")
+  duration = duration.slice(1,duration.length)
+  duration= parseInt(duration)
+  sliders.forEach(slide => {
+    let item = document.createElement('div')
+    item.className = "slider-item";
+    item.innerHTML = `<img class="w-100"
+    src="${slide}"
+    alt="">`;
+    sliderContainer.appendChild(item)
+  })
+  changeSlide(0)
+  timer = setInterval(function () {
+    slideIndex++;
+    changeSlide(slideIndex);
+  }, duration);
+}
+  
+   else{
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
